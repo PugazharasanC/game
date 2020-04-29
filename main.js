@@ -1,4 +1,4 @@
-var random = [0, 0, 0, 0];
+var random = [0, -1, -1, -1];
 var start = () => {
     var start = document.getElementById('button');
     var inp = document.createElement('input');
@@ -11,8 +11,10 @@ var start = () => {
     inp.classList.add('col');
     inp.classList.add('form-control');
     var button = document.createElement('input');
+    button.id = 'guess';
     button.type = 'submit';
     button.value = 'Guess';
+    //button.onclick = guess;
     button.classList.add('form');
     button.classList.add('form-control');
     button.classList.add('col');
@@ -21,19 +23,22 @@ var start = () => {
     start.parentNode.classList.add('row');
     start.parentNode.appendChild(inp);
     start.parentNode.appendChild(button);
-    start.parentNode.setAttribute('onsubmit', 'guess();return false;');
+    start.parentNode.setAttribute('onsubmit', 'guessVal();return false;');
     start.parentNode.removeChild(start);
-    var newPre = document.createElement('pre');
-    newPre.id = 'result';
-    button.parentNode.parentNode.appendChild(newPre);
+    var newDiv = document.createElement('div');
+    newDiv.id = 'result';
+    newDiv.style.height = '200px';
+    newDiv.style.overflowY = 'auto';
+    button.parentNode.parentNode.appendChild(newDiv);
     createRandom();
 }
-var guess = () => {
+var guessVal = () => {
     var val = document.getElementById('input').value;
     var cow = 0;
     var bull = 0;
+    var str = val;
     val = val.split('');
-    console.log('The random num is ' + random.join(''));
+    var rand = random.join('');
     for (var ind = 0; ind < 4; ind++) {
         val[ind] = parseInt(val[ind]);
         if (val[ind] == random[ind]) {
@@ -41,19 +46,30 @@ var guess = () => {
             val[ind] = random[ind] = -1;
         }
     }
-    for (var ind = 0; ind < 4; ind++) {
-        if (val[ind] != -1) {
-            for (var ind2 = 0; ind2 < 4; ind2++) {
-                if (val[ind] == random[ind2]) {
-                    bull++;
-                    val[ind] = random[ind2] = -1;
-                    break;
+    if (cow != 4)
+        for (var ind = 0; ind < 4; ind++) {
+            if (val[ind] != -1) {
+                for (var ind2 = 0; ind2 < 4; ind2++) {
+                    if (val[ind] == random[ind2]) {
+                        bull++;
+                        val[ind] = random[ind2] = -1;
+                        break;
+                    }
                 }
             }
         }
+    random = rand.split('');
+    var newP = document.createElement('p');
+    if (cow == 4) {
+        newP.innerHTML = '<h1>Game Over</h1>'
+        var button = document.getElementById('guess');
+        button.style.display = 'none';
+    } else {
+        newP.innerHTML = 'You got ' + cow + ' Cows & ' + bull + ' Bulls for ' + str;
     }
-    createRandom();
-    document.getElementById('result').innerHTML = 'You got ' + cow + ' Cows & ' + bull + ' Bulls';
+    var res = document.getElementById('result');
+    res.insertBefore(newP, res.firstChild);
+    return false;
 }
 var createRandom = () => {
     random = [0, -1, -1, -1];
