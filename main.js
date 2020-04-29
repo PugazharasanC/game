@@ -27,7 +27,7 @@ var start = () => {
     start.parentNode.removeChild(start);
     var newDiv = document.createElement('div');
     newDiv.id = 'result';
-    newDiv.style.height = '200px';
+    newDiv.style.height = '350px';
     newDiv.style.overflowY = 'auto';
     button.parentNode.parentNode.appendChild(newDiv);
     createRandom();
