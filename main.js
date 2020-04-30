@@ -1,131 +1,88 @@
-var body = document.getElementsByTagName('body')[0];
-var numOfval = parseInt(document.getElementById('num').value);
-var numOfPage = Math.ceil(mainObj.length / numOfval);
-var curPage = 0;
-var prePage = 0;
-var fixSize = () => {
-    numOfval = parseInt(document.getElementById('num').value);
-    numOfPage = Math.ceil(mainObj.length / numOfval);
-    mainDriverFunc();
-}
-var tableBodyCreation = () => {
-    var tableBody = document.createElement('tbody');
-    tableBody.classList.add('table');
-    for (var itr = 0; itr < numOfval; itr++) {
-        var tr = document.createElement('tr');
-        var td = document.createElement('td');
-        td.id = 'id' + itr;
-        tr.appendChild(td);
-        td = document.createElement('td');
-        td.id = 'name' + itr;
-        tr.appendChild(td);
-        td = document.createElement('td');
-        td.id = 'mail' + itr;
-        tr.appendChild(td);
-        tableBody.appendChild(tr);
-    }
-    return tableBody;
-}
-var tableHeadCreation = () => {
-    var tableHead = document.createElement('thead');
-    tableHead.className = 'thead-light';
-    var tr = document.createElement('tr');
-    var th = document.createElement('th');
-    th.innerHTML = 'Id'
-    tr.appendChild(th);
-    th = document.createElement('th');
-    th.innerHTML = 'Name';
-    tr.appendChild(th);
-    th = document.createElement('th');
-    th.innerHTML = 'Mail ID';
-    tr.appendChild(th);
-    tableHead.appendChild(tr);
-    return tableHead;
-}
-var tableCreation = () =>{
-    var table = document.createElement('table');
-    table.classList.add('table');
-    table.classList.add('table-striped');
-    table.classList.add('table-hover');
-    table.appendChild(tableHeadCreation());
-    table.appendChild(tableBodyCreation());
-    return table;
-}
-
-var buttonCreation = () => {
-    var anotherDiv = document.createElement('div');
-    var button = document.createElement('button');
-    button.id = 'prevButton';
+var random = [0, -1, -1, -1];
+var start = () => {
+    var start = document.getElementById('button');
+    var inp = document.createElement('input');
+    inp.value = 1000;
+    inp.id = 'input';
+    inp.type = 'number';
+    inp.setAttribute('min', '1000');
+    inp.setAttribute('max', '9999');
+    inp.classList.add('form');
+    inp.classList.add('col');
+    inp.classList.add('form-control');
+    var button = document.createElement('input');
+    button.id = 'guess';
+    button.type = 'submit';
+    button.value = 'Guess';
+    //button.onclick = guess;
+    button.classList.add('form');
+    button.classList.add('form-control');
+    button.classList.add('col');
     button.classList.add('btn');
-    button.classList.add('btn-light');
-    button.onclick = prevPage;
-    button.innerHTML = 'Previous';
-    anotherDiv.appendChild(button);
-    for (var itr = 0; itr < numOfPage; itr++) {
-        button = document.createElement('button');
-        button.id = itr + 1 + '';
-        button.classList.add('btn');
-        button.classList.add('btn-light');
-        button.setAttribute('onclick', 'movePage(' + (itr + 1) + ')');
-        button.innerHTML = itr + 1 + '';
-        anotherDiv.appendChild(button);
-    }
-    button = document.createElement('button');
-    button.id = 'nextButton';
-    button.classList.add('btn');
-    button.classList.add('btn-light');
-    button.onclick = nextPage;
-    button.innerHTML = 'Next';
-    anotherDiv.appendChild(button);
-    return anotherDiv;
+    button.classList.add('btn-primary');
+    start.parentNode.classList.add('row');
+    start.parentNode.appendChild(inp);
+    start.parentNode.appendChild(button);
+    start.parentNode.setAttribute('onsubmit', 'guessVal();return false;');
+    start.parentNode.removeChild(start);
+    var newDiv = document.createElement('div');
+    newDiv.id = 'result';
+    newDiv.style.height = '200px';
+    newDiv.style.overflowY = 'auto';
+    button.parentNode.parentNode.appendChild(newDiv);
+    createRandom();
 }
-var mainDriverFunc = () => {
-    var myDiv = document.getElementById('myDiv');
-    if (myDiv != null) {
-        body.removeChild(myDiv);
-    }
-    newDiv = document.createElement('div');
-    newDiv.id = 'myDiv';
-    body.className = 'container';
-    newDiv.appendChild(tableCreation());
-    newDiv.appendChild(buttonCreation());
-    body.appendChild(newDiv);
-    movePage('1');
-}
-var nextPage = () => {
-    if (curPage != numOfPage) {
-        movePage(curPage + 1);
-    }
-}
-var prevPage = () => {
-    if (curPage != 1) {
-        movePage(curPage - 1);
-    }
-}
-var movePage = (page) => {
-    page = parseInt(page);
-    var start = (page - 1) * numOfval;
-    var end = page * numOfval;
-    var itr;
-    for (itr = start; itr < end && itr < mainObj.length; itr++) {
-        document.getElementById('id' + (itr - start)).innerHTML = mainObj[itr].id;
-        document.getElementById('mail' + (itr - start)).innerHTML = mainObj[itr].email;
-        document.getElementById('name' + (itr - start)).innerHTML = mainObj[itr].name;
-    }
-    if (itr < end) {
-        for (itr; itr < end; itr++) {
-            document.getElementById("id" + (itr - start)).innerHTML = '';
-            document.getElementById("mail" + (itr - start)).innerHTML = '';
-            document.getElementById("name" + (itr - start)).innerHTML = '';
+var guessVal = () => {
+    var val = document.getElementById('input').value;
+    var cow = 0;
+    var bull = 0;
+    var str = val;
+    val = val.split('');
+    var rand = random.join('');
+    for (var ind = 0; ind < 4; ind++) {
+        val[ind] = parseInt(val[ind]);
+        if (val[ind] == random[ind]) {
+            cow++;
+            val[ind] = random[ind] = -1;
         }
     }
-    prePage = curPage;
-    curPage = page;
-    if (prePage != 0) {
-        document.getElementById('' + prePage).classList.remove('btn-primary');
-        document.getElementById('' + prePage).classList.add('btn-light');
+    if (cow != 4)
+        for (var ind = 0; ind < 4; ind++) {
+            if (val[ind] != -1) {
+                for (var ind2 = 0; ind2 < 4; ind2++) {
+                    if (val[ind] == random[ind2]) {
+                        bull++;
+                        val[ind] = random[ind2] = -1;
+                        break;
+                    }
+                }
+            }
+        }
+    random = rand.split('');
+    var newP = document.createElement('p');
+    if (cow == 4) {
+        newP.innerHTML = '<h1>Game Over</h1>'
+        var button = document.getElementById('guess');
+        button.style.display = 'none';
+    } else {
+        newP.innerHTML = 'You got ' + cow + ' Cows & ' + bull + ' Bulls for ' + str;
     }
-    document.getElementById('' + curPage).classList.add('btn-primary');
-    document.getElementById('' + curPage).classList.remove('btn-light');
+    var res = document.getElementById('result');
+    res.insertBefore(newP, res.firstChild);
+    return false;
 }
-window.onload = mainDriverFunc;
+var createRandom = () => {
+    random = [0, -1, -1, -1];
+    while (random[0] <= 0) {
+        random[0] = Math.floor(Math.random() * 10);
+    }
+    while (random[1] < 0) {
+        random[1] = Math.floor(Math.random() * 10);
+    }
+    while (random[2] < 0) {
+        random[2] = Math.floor(Math.random() * 10);
+    }
+    while (random[3] < 0) {
+        random[3] = Math.floor(Math.random() * 10);
+    }
+}
